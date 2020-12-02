@@ -15,7 +15,7 @@ public class Projectile {
     yPos = yPosIn;
     size = sizeIn;
     screen = screenIn;
-    ySpeed = screen.circleSpeed * 2;
+    ySpeed = screen.circleSpeed * 0;
     shouldDraw = true;
   }
 

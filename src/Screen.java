@@ -2,10 +2,10 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferStrategy;
 
 public class Screen extends Canvas implements KeyListener {
+
     char keyPressed;
     int screenSize;
     Color backgroundColor;
@@ -24,6 +24,8 @@ public class Screen extends Canvas implements KeyListener {
     Enemy[] enemies;
     int numberOfEnemies;
     int enemySize;
+    Player player;
+    int playerSize;
 
     /**
      * The main part of the program
@@ -35,16 +37,10 @@ public class Screen extends Canvas implements KeyListener {
             for (int i = 0; i < screen.enemies.length; i++) {
                 screen.enemies[i].move();
                 screen.enemies[i].wrapAround(screen.screenSize);
-
             }
             screen.projectile.moveUp();
             screen.repaint();
             screen.delay(screen.delayTime);
-
-            if (screen.onHit(screen.projectile)) {
-                System.out.println("You Lost :( Try Again?");
-                System.exit(0);
-            }
             if (screen.score == screen.numberOfEnemies) {
                 System.out.println("You Won!! Thanks for Playing!!");
                 System.exit(0);
@@ -66,6 +62,8 @@ public class Screen extends Canvas implements KeyListener {
         circleSpeed = screenSize / 50;
         coverBoxXPos = 250;
         coverBoxYPos = 500;
+        playerSize = 100;
+        player = new Player(xPos - playerSize, yPos - playerSize, playerSize, this);
         // the numbers for projectile and enemy here are arbitrary
         // since their respective shouldDraw's are turned off initially
         projectile = new Projectile(50, 50, 50, this);
@@ -108,13 +106,13 @@ public class Screen extends Canvas implements KeyListener {
      * @param g the Graphics object to draw on
      */
     public void paint(Graphics g) {
-        moveCircle();
-        cover(g);
+        player.movePlayer(keyCode, screenSize);
+        player.drawPlayer((Graphics2D) g);
+
+//        cover(g);
         if (projectile.shouldDraw) {
             projectile.drawBullet(g);
         }
-        int enemPicker = (int) (Math.random() * enemies.length);
-        enemies[enemPicker].attack(g);
         for (int i = 0; i < enemies.length; i++) {
             if (enemies[i].onHit(projectile)) {
                 score++;
@@ -123,11 +121,13 @@ public class Screen extends Canvas implements KeyListener {
             }
         }
         keyCode = '0';
+
         for (int i = 0; i < enemies.length; i++) {
             enemies[i].drawEnemy(g);
         }
-        g.setColor(Color.gray);
-        g.fillOval(xPos - circleSize / 2, yPos - circleSize / 2, circleSize, circleSize);
+
+//        g.setColor(Color.gray);
+//        g.fillOval(xPos - circleSize / 2, yPos - circleSize / 2, circleSize, circleSize);
         // sets up score text
         Font font = new Font("Thonburi", Font.BOLD, 24);
         g.setFont(font);
@@ -187,37 +187,14 @@ public class Screen extends Canvas implements KeyListener {
     public void keyReleased(KeyEvent e) {
     }
 
-    public void moveCircle() {
-        //right arrow key
-        if (keyCode == 39 || keyCode == 68)
-            xPos += circleSpeed;
-        //left arrow key
-        if (keyCode == 37 || keyCode == 65)
-            xPos -= circleSpeed;
-        //up arrow key
-        if (keyCode == 38 || keyCode == 87) {
-            shoot();
-        }
 
-
-        //wrap around
-        if (xPos < 0)
-            xPos = screenSize;
-        if (xPos > screenSize)
-            xPos = 0;
-        if (yPos < 0)
-            yPos = screenSize;
-        if (yPos > screenSize)
-            yPos = 0;
-    }
-
-    public void cover(Graphics g) {
-        g.setColor(Color.white);
-        g.fillRect(coverBoxXPos - coverBoxXPos, coverBoxYPos, circleSize, screenSize / 25);
-        g.fillRect(coverBoxXPos * 2, coverBoxYPos, circleSize, screenSize / 25);
-        g.fillRect(coverBoxXPos, coverBoxYPos, circleSize, screenSize / 25);
-
-    }
+//    public void cover(Graphics g) {
+//        g.setColor(Color.white);
+//        g.fillRect(coverBoxXPos - coverBoxXPos, coverBoxYPos, circleSize, screenSize / 25);
+//        g.fillRect(coverBoxXPos * 2, coverBoxYPos, circleSize, screenSize / 25);
+//        g.fillRect(coverBoxXPos, coverBoxYPos, circleSize, screenSize / 25);
+//
+//    }
 
     void delay(int delayTime) {
         try {
@@ -227,22 +204,9 @@ public class Screen extends Canvas implements KeyListener {
     }
 
     public void shoot() {
-        projectile = new Projectile(xPos, yPos, 15, this);
+        projectile = new Projectile(player.xPos + 25, player.yPos - 25, 15, this);
         projectile.setColor(Color.blue);
         projectile.moveUp();
-    }
-
-    public boolean onHit(Projectile projectile) {
-        if (!projectile.shouldDraw) {
-            return false;
-        }
-        double distance = Point2D.distance(xPos,yPos,projectile.xPos,projectile.yPos);
-        if((distance >= circleSize) && (distance <= (circleSize + 10))) {
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 
 }
