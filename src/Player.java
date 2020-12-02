@@ -6,7 +6,6 @@ public class Player {
     int myHealth;
     int damage;
     int xPos, yPos;
-    Color playerColor;
     public boolean shouldDraw;
     int[] xPoints1;
     int[] yPoints1;
@@ -96,23 +95,6 @@ public class Player {
             yPos = screenSize;
         if (yPos > screenSize)
             yPos = 0;
-    }
-
-
-    /**
-     * Deals with collision between projectiles from the enemy player
-     */
-    public void onHit() {
-
-    }
-
-    /**
-     * Spawns a new projectile towards the enemy
-     */
-    public void attack() {
-        projectile = new Projectile(xPos, yPos, 15, screen);
-        projectile.setColor(Color.blue);
-        projectile.moveUp();
     }
 
 }

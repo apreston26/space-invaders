@@ -5,8 +5,6 @@ public class Enemy {
 
   int size;
   double xSpeed;
-  int myHealth;
-  int damage;
   int xPos;
   int yPos;
   Color enemyColor;
@@ -26,11 +24,6 @@ public class Enemy {
     xSpeed = screen.circleSpeed / 2 ;
     shouldDraw = true;
   }
-
-  public void setColor(Color color) {
-    this.enemyColor = color;
-  }
-
 
   /**
    * Creates the player sprite
