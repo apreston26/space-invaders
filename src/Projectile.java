@@ -19,20 +19,34 @@ public class Projectile {
     shouldDraw = true;
   }
 
+  /**
+   * setColor is used to change the color of the projectile to the player's liking
+   * @param color a reference to the object Color
+   */
   public void setColor(Color color) {
     this.color = color;
   }
 
+  /**
+   * This creates a temporary object in the game that the player shoots at the enemy
+   * @param g Graphics object we draw with
+   */
   public void drawBullet(Graphics g) {
     g.setColor(color);
     g.fillOval(xPos - size / 2, yPos - size / 2, size, size);
   }
 
+  /**
+   * This function is used to move the bullet up towards to enemies
+   */
   public void moveUp() {
     xPos += xSpeed;
     yPos -= ySpeed;
   }
 
+  /**
+   * This function (does not work at the moment) is used to move the bullet down towards the player
+   */
   public void moveDown() {
     xPos += xSpeed;
     yPos += ySpeed ;
@@ -44,19 +58,6 @@ public class Projectile {
       xSpeed = xSpeed * -1;
     else if (yPos < 0 || yPos > screenSize)
       ySpeed = ySpeed * -1;
-  }
-
-  public boolean checkCollision(Enemy enemy) {
-    if (!enemy.shouldDraw) {
-      return false;
-    }
-    double distance = Point2D.distance(xPos,yPos,enemy.xPos,enemy.yPos);
-    if((distance >= size) && (distance <= (size + 10))) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
 
 }

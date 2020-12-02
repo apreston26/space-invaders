@@ -28,10 +28,21 @@ public class Enemy {
   /**
    * Creates the player sprite
    */
-  public void drawEnemy(Graphics g) {
+  public void drawEnemy(Graphics2D g) {
     if(shouldDraw) {
-      g.setColor(enemyColor);
-      g.fillOval(xPos - size / 2, yPos - size / 2, size, size);
+      Color alien = new Color(15, 253, 1);
+      g.setColor(alien);
+      g.drawArc(xPos,yPos,size/3,size/4,0,180);
+      g.fillArc(xPos,yPos,size/3,size/4,0,180);
+
+      Color base = new Color(170, 170, 170);
+      g.setColor(base);
+      g.fillOval(xPos-size/3, yPos+size/8, size, size/4);
+
+      Color stroke = new Color(0,0,0, 196);
+      g.setColor(stroke);
+      g.setStroke(new BasicStroke(2));
+      g.drawLine(xPos-size/3,yPos+size/4, xPos+size-size/3,yPos+size/4);
     }
   }
 
@@ -39,11 +50,14 @@ public class Enemy {
    * Moves the enemy side to side until the end of the screen is reached then it moves down
    * one space and goes back to moving side to side 
    */
-
   public void move() {
     xPos += xSpeed;
   }
 
+  /**
+   * Moves the enemies in a space invaders like manner
+   * @param screenSize is used to map out the border of the screen
+   */
   public void wrapAround(int screenSize ) {
     if (xPos < 0) {
       xSpeed = xSpeed * -1.025;
@@ -60,7 +74,7 @@ public class Enemy {
    * @return
    */
   public boolean onHit(Projectile projectile) {
-      if (!projectile.shouldDraw) {
+      if (!shouldDraw) {
         return false;
       }
       double distance = Point2D.distance(xPos,yPos,projectile.xPos,projectile.yPos);

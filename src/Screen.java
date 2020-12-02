@@ -41,7 +41,8 @@ public class Screen extends Canvas implements KeyListener {
             screen.projectile.moveUp();
             screen.repaint();
             screen.delay(screen.delayTime);
-            if (screen.score == screen.numberOfEnemies) {
+            //FIXME: there is an annoying bug right now where there will always be 21 enemies
+            if (screen.score == 21) {
                 System.out.println("You Won!! Thanks for Playing!!");
                 System.exit(0);
             }
@@ -54,7 +55,7 @@ public class Screen extends Canvas implements KeyListener {
      */
     Screen() {
         screenSize = 600;
-        backgroundColor = new Color(0);
+        backgroundColor = new Color(5, 19, 80);
         circleSize = 100;
         xPos = screenSize / 2;
         yPos = screenSize - 10;
@@ -69,7 +70,7 @@ public class Screen extends Canvas implements KeyListener {
         projectile = new Projectile(50, 50, 50, this);
         enemy = new Enemy(50, 50, 50, this);
         projectile.shouldDraw = false;
-        numberOfEnemies = screenSize / 20;
+        numberOfEnemies = screenSize / 10;
         enemies = new Enemy[numberOfEnemies];
         enemySize = 30;
         //draws the row of enemies
@@ -108,31 +109,13 @@ public class Screen extends Canvas implements KeyListener {
     public void paint(Graphics g) {
         player.movePlayer(keyCode, screenSize);
         player.drawPlayer((Graphics2D) g);
-
-//        cover(g);
-        if (projectile.shouldDraw) {
-            projectile.drawBullet(g);
-        }
-        for (int i = 0; i < enemies.length; i++) {
-            if (enemies[i].onHit(projectile)) {
-                score++;
-                enemies[i].shouldDraw = false;
-                projectile.shouldDraw = false;
-            }
-        }
+        drawBackground(g);
         keyCode = '0';
-
+        scoreCalc(g);
         for (int i = 0; i < enemies.length; i++) {
-            enemies[i].drawEnemy(g);
+            enemies[i].drawEnemy((Graphics2D) g);
         }
-
-//        g.setColor(Color.gray);
-//        g.fillOval(xPos - circleSize / 2, yPos - circleSize / 2, circleSize, circleSize);
-        // sets up score text
-        Font font = new Font("Thonburi", Font.BOLD, 24);
-        g.setFont(font);
-        g.setColor(Color.WHITE);
-        g.drawString(scoreText + score, 25, 575);
+        fontSetter(g);
     }
 
     /**
@@ -187,15 +170,10 @@ public class Screen extends Canvas implements KeyListener {
     public void keyReleased(KeyEvent e) {
     }
 
-
-//    public void cover(Graphics g) {
-//        g.setColor(Color.white);
-//        g.fillRect(coverBoxXPos - coverBoxXPos, coverBoxYPos, circleSize, screenSize / 25);
-//        g.fillRect(coverBoxXPos * 2, coverBoxYPos, circleSize, screenSize / 25);
-//        g.fillRect(coverBoxXPos, coverBoxYPos, circleSize, screenSize / 25);
-//
-//    }
-
+    /**
+     * This program makes it sleep or pause for a very short period to allow the player to view the code properly
+     * @param delayTime the amount of time in milliseconds that the program is paused
+     */
     void delay(int delayTime) {
         try {
             Thread.sleep(delayTime);
@@ -203,10 +181,56 @@ public class Screen extends Canvas implements KeyListener {
         }
     }
 
+    /**
+     * shoot() is what always the player to shoot by creating a new projectile every time it is referenced
+     */
     public void shoot() {
         projectile = new Projectile(player.xPos + 25, player.yPos - 25, 15, this);
-        projectile.setColor(Color.blue);
+        projectile.setColor(Color.red);
         projectile.moveUp();
+    }
+
+    /**
+     * draws the background for the game
+     * @param g Graphics object we draw with
+     */
+    public void drawBackground(Graphics g) {
+        for (int i = 0; i < 30; i++) {
+            g.setColor(Color.white);
+            g.fillOval((int) (Math.random() * screenSize), (int) (Math.random() * screenSize), 3, 3);
+        }
+        for (int i = 0; i < 30; i++) {
+            g.setColor(Color.white);
+            g.fillOval((int) (Math.random() * screenSize), (int) (Math.random() * screenSize), 6, 6);
+        }
+    }
+
+    /**
+     * Calculates the score by checking the collision between the bullet and the enemy
+     * @param g Graphics object we draw with
+     */
+    public void scoreCalc(Graphics g) {
+        if (projectile.shouldDraw) {
+            projectile.drawBullet(g);
+        }
+        for (int i = 0; i < enemies.length; i++) {
+            if (enemies[i].onHit(projectile)) {
+                score++;
+                enemies[i].shouldDraw = false;
+                projectile.shouldDraw = false;
+            }
+        }
+    }
+
+    /**
+     * Sets the font for the score in the lower right hand corner
+     * @param g Graphics object we draw with
+     */
+    public void fontSetter(Graphics g) {
+        Font font = new Font("Thonburi", Font.BOLD, 24);
+        g.setFont(font);
+        g.setColor(Color.WHITE);
+        g.drawString(scoreText + score, 25, 575);
     }
 
 }

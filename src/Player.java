@@ -75,14 +75,19 @@ public class Player {
         g.fillOval(xPos + size / 5, yPos - size / 4, 10, 10);
     }
 
+    /**
+     * Player's move set
+     * @param keyCode is used to detect what keys the player is currently pressing
+     * @param screenSize is used to ensure the player does not "fall" off the screen
+     */
     public void movePlayer(int keyCode, int screenSize) {
-        //right arrow key
+        //right arrow key || D key
         if (keyCode == 39 || keyCode == 68)
             xPos += xSpeed;
-        //left arrow key
+        //left arrow key || A key
         if (keyCode == 37 || keyCode == 65)
             xPos -= xSpeed;
-        //up arrow key
+        //up arrow key || W key
         if (keyCode == 38 || keyCode == 87) {
             screen.shoot();
         }
